@@ -17,14 +17,23 @@ tcpServer.on("connection", (socket) => {
   socket.on("data", (msg) => {
     console.log(`Received: ${msg.toString()}`);
 
-    const jsonData: VehicleData = JSON.parse(msg.toString());
+    try {
+      const jsonData: VehicleData = JSON.parse(msg.toString());
 
-    // Send JSON over WS to frontend clients
-    websocketServer.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(msg.toString());
+      // Send JSON over WS to frontend clients
+      websocketServer.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(msg.toString());
+        }
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error("JSON parse failed", error.message);
       }
-    });
+      else {
+        console.error("Unknown error", error);
+      }
+    }
   });
 
   socket.on("end", () => {
