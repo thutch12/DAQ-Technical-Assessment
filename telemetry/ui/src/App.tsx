@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import LiveValue from "./live_value";
 import RedbackLogo from "./redback_logo.jpg";
 import "./App.css";
@@ -11,6 +11,34 @@ interface VehicleData {
   timestamp: number;
 }
 
+// for dark and light mode
+const ThemeContext = createContext({
+  theme: "dark",
+  toggleTheme: () => {},
+});
+
+const useTheme = () => useContext(ThemeContext);
+
+const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "dark";
+  });
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => {
+      const newTheme = prevTheme === "dark" ? "light" : "dark";
+      localStorage.setItem("theme", newTheme);
+      return newTheme;
+    });
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+
 function App() {
   const [temperature, setTemperature] = useState<number>(0);
   const {
@@ -21,6 +49,13 @@ function App() {
       share: false,
       shouldReconnect: () => true,
     });
+
+  const { theme, toggleTheme } = useTheme();
+
+  // Apply theme to body class
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
 
   useEffect(() => {
     switch (readyState) {
@@ -53,9 +88,13 @@ function App() {
         />
         <p className="value-title">Live Battery Temperature</p>
         <LiveValue temp={temperature} />
+        <button onClick={toggleTheme}>
+          Switch to {theme === "dark" ? "Light" : "Dark"} Mode
+        </button>
       </header>
     </div>
   );
 }
 
 export default App;
+export { ThemeProvider }
