@@ -1,16 +1,19 @@
 .App {
   text-align: center;
+  background-color: var(--bg-colour);
+  color: var(--text-colour);
+  min-height: 100vh;
 }
 
 .App-header {
-  background-color: #000000;
+  background-color: var(--header-bg-colour);
   min-height: 10vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+  color: var(--header-text-colour);
 }
 
 .live-value {
@@ -30,3 +33,18 @@
   font-size: calc(25px + 2vmin);
 }
 
+body.light {
+  --bg-colour: #ffffff;
+  --text-colour: #000000;
+  --header-bg-colour: #f0f0f0;
+  --header-text-colour: #000000;
+  --live-value-colour: #000000;
+}
+
+body.dark {
+  --bg-colour: #000000;
+  --text-colour: #ffffff;
+  --header-bg-colour: #000000;
+  --header-text-colour: #ffffff;
+  --live-value-colour: #ffffff;
+}
